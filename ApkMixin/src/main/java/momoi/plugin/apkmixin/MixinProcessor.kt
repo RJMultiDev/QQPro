@@ -69,17 +69,23 @@ class MixinProcessor(
     }
 
     private fun findMixinClasses(srcDex: DexFile, targetDex: DexFile): Map<ClassDef, ClassDef> {
-        val mixinClasses = mutableMapOf<ClassDef, ClassDef>()
+        val mixinClasses = LinkedHashMap<ClassDef, ClassDef>()
+        val maybeTwiceMixinClasses = mutableListOf<ClassDef>()
         var mixinClassCount = 0
         srcDex.classes.forEach { srcDef ->
             if (srcDef.annotations.any { it.type == "Lmomoi/anno/mixin/Mixin;" }) {
-                mixinClasses[srcDef] = srcDef.superclass?.let { s -> targetDex.findClass(s) }
-                    ?: throw FileNotFoundException(
-                        "Can not find mixin ${srcDef.type} target class ${srcDef.superclass}"
-                    )
-                info("Found Mixin Class: ${srcDef.type} to ${srcDef.superclass}")
-                mixinClassCount++
+                srcDef.superclass?.let { s -> targetDex.findClass(s) }?.let {
+                    mixinClasses[srcDef] = it
+                    info("Found Mixin Class: ${srcDef.type} to ${srcDef.superclass}")
+                    mixinClassCount++
+                } ?: maybeTwiceMixinClasses.add(srcDef)
             }
+        }
+        maybeTwiceMixinClasses.forEach { srcDef ->
+            val srcTrg = mixinClasses.keys.firstOrNull { it.type == srcDef.superclass }
+            if (srcTrg != null) {
+                mixinClasses[srcDef] = srcTrg
+            } else throw FileNotFoundException("Cannot find mixin class ${srcDef.superclass} for ${srcDef.type}")
         }
         lifecycle("Found $mixinClassCount mixin classes")
         return mixinClasses
@@ -188,7 +194,7 @@ class MixinProcessor(
                 throw IOException("Failed to create ${it.absolutePath}")
             }
         }
-        
+
         MultiDexIO.writeDexFile(
             /* multiDex = */ true,
             /* threadCount = */ if (extension.useProcessorCountAsThreadCount) Runtime.getRuntime().availableProcessors() else targetZipFile.getDexCount(namer),
