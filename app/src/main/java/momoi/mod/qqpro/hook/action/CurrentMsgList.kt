@@ -14,6 +14,7 @@ import com.tencent.watch.aio_impl.data.WatchAIOMsgItem
 import momoi.anno.mixin.Mixin
 import momoi.mod.qqpro.Utils
 import momoi.mod.qqpro.lib.Observable
+import java.util.LinkedList
 
 object CurrentMsgList{
     lateinit var vb: WatchAIOListVB
@@ -68,9 +69,23 @@ object CurrentMsgList{
     class Hook : WatchAIOListVB() {
         @Suppress("UNCHECKED_CAST")
         override fun n(state: MsgListUiState, uiHelper: IListUIOperationApi) {
-            super.n(state, uiHelper)
             vb = this
-            msgList.update(state as List<WatchAIOMsgItem>)
+            val list = state as LinkedList<WatchAIOMsgItem>
+            val local = msgList.value
+            if (local.isNotEmpty()) {
+                val localLastTime = local.last().d.msgTime
+                list.findLast { it.d.msgTime <= localLastTime }?.let {
+                    if (it.d.msgTime < localLastTime) {
+                        val index = list.indexOf(it)
+                        list.addAll(index, local.subList(
+                            local.indexOf(it), local.size
+                        ))
+                    }
+                }
+            }
+            msgList.update(list)
+            super.n(state, uiHelper)
+            Utils.log("MsgList updated: ${msgList.value.size}")
         }
     }
     @Mixin

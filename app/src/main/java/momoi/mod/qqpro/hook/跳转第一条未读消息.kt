@@ -49,10 +49,12 @@ class SkipAction(
                 if (isFinished) return
                 val first = (rv.layoutManager as AIOLayoutManager).findFirstVisibleItemPosition()
                 if (first == -1) return
-                count = recent.unreadCntCached - CurrentMsgList.msgList.value.size + first
-                Utils.log("count updated: $first -> $count")
+                val newCount = recent.unreadCntCached - CurrentMsgList.msgList.value.size + first
                 if (count > 0) {
-                    tv.text = format(count)
+                    if (newCount < count) {
+                        count = newCount
+                        tv.text = format(count)
+                    }
                 } else {
                     isFinished = true
                     tv.visibility = View.GONE

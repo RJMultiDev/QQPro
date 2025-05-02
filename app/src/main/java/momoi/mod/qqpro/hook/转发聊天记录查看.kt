@@ -26,6 +26,7 @@ import com.tencent.watch.aio_impl.ui.cell.unsupport.WatchToQQViewMsgItem
 import com.tencent.watch.aio_impl.ui.widget.AIOCellGroupWidget
 import loadPicElement
 import momoi.anno.mixin.Mixin
+import momoi.mod.qqpro.Settings
 import momoi.mod.qqpro.hook.style.MyImageView
 import momoi.mod.qqpro.hook.view.MyDialogFragment
 import momoi.mod.qqpro.lib.FILL
@@ -137,7 +138,7 @@ class DetailFragment(private val contact: Contact, private val data: MultiMsgDat
                                         ele.textElement?.let {
                                             group.background(0xFF_515151.toInt())
                                             add<TextView>()
-                                                .textSize(14f)
+                                                .textSize(14f * Settings.chatScale.value)
                                                 .textColor(0xFF_FFFFFF.toInt())
                                                 .text(it.content)
                                             return@forEach
@@ -145,6 +146,7 @@ class DetailFragment(private val contact: Contact, private val data: MultiMsgDat
                                         ele.picElement?.let {
                                             add<MyImageView>()
                                                 .size(it.picWidth, it.picHeight)
+                                                .background(0xFF_515151.toInt())
                                                 .clickable {
                                                     showDialog(BigImageFragment(it))
                                                 }
@@ -153,7 +155,7 @@ class DetailFragment(private val contact: Contact, private val data: MultiMsgDat
                                         }
                                         group.background(0xFF_515151.toInt())
                                         add<TextView>()
-                                            .textSize(14f)
+                                            .textSize(14f * Settings.chatScale.value)
                                             .textColor(0xFF_FFFF22.toInt())
                                             .text("不支持的消息类型")
                                     }
@@ -167,8 +169,8 @@ class DetailFragment(private val contact: Contact, private val data: MultiMsgDat
 class MultiMsgCellGroup(context: Context) : AIOCellGroupWidget(context) {
     private var multiMsgWidget: View? = null
     fun recovery() {
-        multiMsgWidget?.visibility = View.GONE
-        contentWidget.visibility = View.VISIBLE
+        multiMsgWidget?.visibility = GONE
+        contentWidget.visibility = VISIBLE
     }
 
     fun applyMultiMsg(contact: Contact, data: MultiMsgData) {
@@ -200,8 +202,8 @@ class MultiMsgCellGroup(context: Context) : AIOCellGroupWidget(context) {
             val warp = contentWidget.warp()
             warp.addView(multiMsgWidget, 0)
         }
-        contentWidget.visibility = View.GONE
-        multiMsgWidget?.visibility = View.VISIBLE
+        contentWidget.visibility = GONE
+        multiMsgWidget?.visibility = VISIBLE
     }
 }
 
@@ -247,7 +249,7 @@ class MultiMsgData(val contact: Contact, val rawMsg: MsgRecord) {
     }
 
     fun getDetail(callback: (List<MsgRecord>) -> Unit) {
-        (KernelServiceUtil.c() as? MsgService)?.service?.getMultiMsg(
+        KernelServiceUtil.f()?.wrapperSession?.msgService?.getMultiMsg(
             contact, rawMsg.msgId, rawMsg.msgId
         ) { i: Int, s: String, msgRecords: ArrayList<MsgRecord> ->
             callback(msgRecords)

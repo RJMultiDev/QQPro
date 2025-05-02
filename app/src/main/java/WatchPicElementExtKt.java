@@ -2,6 +2,7 @@ import android.view.View;
 
 import androidx.fragment.app.Fragment;
 
+import com.tencent.qqnt.kernel.api.IKernelService;
 import com.tencent.qqnt.kernel.nativeinterface.PicElement;
 import com.tencent.watch.aio_impl.data.WatchAIOMsgItem;
 import com.tencent.watch.aio_impl.ui.widget.AIOCellGroupWidget;
@@ -18,6 +19,11 @@ public class WatchPicElementExtKt {
     }
     @Nullable
     public static final String C0(@NotNull PicElement picElement) {
+        return null;
+    }
+
+    @NotNull
+    public static final IKernelService r0() {
         return null;
     }
 }

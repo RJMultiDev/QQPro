@@ -1,4 +1,5 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
-public class IClientKeyCallback {
+public interface IClientKeyCallback {
+    void onResult(int i, String str, String str2, long j, String str3, long j2);
 }

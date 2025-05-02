@@ -1,5 +1,10 @@
 package com.tencent.qqnt.kernel.nativeinterface;
 
-interface IQQNTWrapperSession {
+public interface IQQNTWrapperSession {
     IKernelTicketService getTicketService();
+    IKernelRichMediaService getRichMediaService();
+    IKernelGroupService getGroupService();
+    IKernelMsgService getMsgService();
+
+    IKernelSearchService getSearchService();
 }

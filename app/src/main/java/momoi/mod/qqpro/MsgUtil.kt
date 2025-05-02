@@ -1,6 +1,7 @@
 package momoi.mod.qqpro
 
 import android.view.View
+import com.tencent.qqnt.kernel.api.impl.KernelServiceImpl
 import com.tencent.qqnt.kernel.nativeinterface.MsgRecord
 import com.tencent.qqnt.msg.api.impl.MsgServiceImpl
 import com.tencent.qqnt.msg.api.impl.MsgUtilApiImpl

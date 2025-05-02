@@ -95,6 +95,9 @@ class MixinProcessor(
         val modifiedClasses = mutableMapOf<String, ClassDef>()
 
         srcDex.classes.forEach { srcDef ->
+            if (!srcDef.type.startsWith("Lmomoi/")) {
+                return@forEach
+            }
             var content = srcDef.toSmali()
             mixinClasses.forEach { (rs, rt) ->
                 content = content.replace(rs.type, rt.type)
