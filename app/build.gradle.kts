@@ -38,11 +38,7 @@ android {
 
 dependencies {
     implementation(project(":ApkMixin-annotation"))
-
-    compileOnly(libs.androidx.fragment)
-    compileOnly(libs.androidx.constraintlayout)
-    compileOnly(libs.androidx.recyclerview)
-    compileOnly(libs.androidx.viewpager2)
+    compileOnly(fileTree("./libs"))
 }
 
 apkMixin {
